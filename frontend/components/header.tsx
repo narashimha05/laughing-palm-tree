@@ -21,9 +21,6 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <Link href="/" className="text-foreground/80 hover:text-primary transition-colors cursor-pointer">
-              Home
-            </Link>
             <Link href="/companion" className="text-foreground/80 hover:text-primary transition-colors">
               Companion
             </Link>
