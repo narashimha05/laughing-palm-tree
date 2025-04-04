@@ -63,7 +63,7 @@ export default function Home() {
                 Track your progress and gain insights from your sessions. Visualize your mood trends and usage patterns
                 over time.
               </p>
-              <Link href="/dashboard" className="w-full">
+              <Link href="/analytics" className="w-full">
                 <Button className="w-full bg-teal-600 hover:bg-teal-700">
                   View Dashboard
                   <ArrowRight className="ml-2 h-4 w-4" />

@@ -28,9 +28,6 @@ export default function Header() {
             <Link href="/quick-relief" className="text-foreground/80 hover:text-primary transition-colors">
               Quick Relief
             </Link>
-            <Link href="/dashboard" className="text-foreground/80 hover:text-primary transition-colors">
-              Dashboard
-            </Link>
             <Link href="/analytics" className="text-foreground/80 hover:text-primary transition-colors">
               Analytics
             </Link>
