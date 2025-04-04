@@ -52,13 +52,6 @@ export default function Header() {
         {isMenuOpen && (
           <nav className="md:hidden pt-4 pb-2 space-y-3">
             <Link
-              href="/"
-              className="block py-2 text-foreground/80 hover:text-primary transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
               href="/companion"
               className="block py-2 text-foreground/80 hover:text-primary transition-colors"
               onClick={() => setIsMenuOpen(false)}
