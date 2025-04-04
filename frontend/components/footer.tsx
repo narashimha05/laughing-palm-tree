@@ -2,7 +2,7 @@ import Link from "next/link"
 
 export default function Footer() {
   return (
-    <footer className="bg-teal-800 text-white py-8">
+    <footer className="bg-[#32ada7cb] text-white py-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -26,6 +26,11 @@ export default function Footer() {
               <li>
                 <Link href="/quick-relief" className="text-teal-200 hover:text-white transition-colors">
                   Quick Relief
+                </Link>
+              </li>
+              <li>
+                <Link href="/analytics" className="text-teal-200 hover:text-white transition-colors">
+                  Dashboard
                 </Link>
               </li>
               <li>

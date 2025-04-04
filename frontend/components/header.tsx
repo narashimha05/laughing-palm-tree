@@ -1,5 +1,5 @@
 "use client"
-
+import { Waves } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
@@ -10,16 +10,18 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
-    <header className="bg-background border-b">
+    <header className="bg-[#32ada7cb] border-b">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-primary">Serenity</span>
+            {/* <span className="text-2xl font-bold text-white"> */}
+            <Waves className="h-10 w-10 text-white" />
+              {/* Serenity</span> */}
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <Link href="/" className="text-foreground/80 hover:text-primary transition-colors">
+            <Link href="/" className="text-foreground/80 hover:text-primary transition-colors cursor-pointer">
               Home
             </Link>
             <Link href="/companion" className="text-foreground/80 hover:text-primary transition-colors">

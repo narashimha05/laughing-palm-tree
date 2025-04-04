@@ -76,20 +76,20 @@ export default function QuickReliefPage() {
         <h1 className="text-3xl font-bold text-teal-800 mb-8 text-center">Quick Stress Relief</h1>
 
         <Tabs defaultValue="breathing" className="max-w-3xl mx-auto">
-          <TabsList className="grid grid-cols-4 mb-10 rounded-x w-full">
-            <TabsTrigger value="breathing" className="flex flex-col items-center py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md ">
+          <TabsList className="grid grid-cols-4 mb-10 rounded-x w-full bg-[#EAFDF8] ">
+            <TabsTrigger value="breathing" className="flex flex-col items-center py-3 rounded-lg data-[state=active]:bg-black data-[state=active]:shadow-md cursor-pointer">
               <Lungs className="h-5 w-5 mb-1" />
               <span className="text-black">Breathing</span>
             </TabsTrigger>
-            <TabsTrigger value="grounding" className="flex flex-col items-center py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md">
+            <TabsTrigger value="grounding" className="flex flex-col items-center py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md cursor-pointer">
               <Brain className="h-5 w-5 mb-1" />
               <span className="text-black">Grounding</span>
             </TabsTrigger>
-            <TabsTrigger value="movement" className="flex flex-col items-center py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md">
+            <TabsTrigger value="movement" className="flex flex-col items-center py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md cursor-pointer">
               <Activity className="h-5 w-5 mb-1" />
               <span className="text-black">Movement</span>
             </TabsTrigger>
-            <TabsTrigger value="sounds" className="flex flex-col items-center py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md">
+            <TabsTrigger value="sounds" className="flex flex-col items-center py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md cursor-pointer">
               <Music className="h-5 w-5 mb-1" />
               <span className="text-black">Sounds</span>
             </TabsTrigger>
@@ -119,19 +119,19 @@ export default function QuickReliefPage() {
 
                 <div className="flex justify-center space-x-4">
                   {!isBreathingActive ? (
-                    <Button onClick={startBreathingExercise} className="bg-teal-600 hover:bg-teal-700">
+                    <Button onClick={startBreathingExercise} className="bg-teal-600 hover:bg-teal-700 cursor-pointer">
                       <PlayCircle className="mr-2 h-5 w-5" />
                       Start
                     </Button>
                   ) : (
-                    <Button onClick={stopBreathingExercise} variant="outline">
+                    <Button onClick={stopBreathingExercise} variant="outline" className="cursor-pointer">
                       <PauseCircle className="mr-2 h-5 w-5" />
                       Pause
                     </Button>
                   )}
 
-                  <Button onClick={resetBreathingExercise} variant="outline">
-                    <RotateCcw className="mr-2 h-5 w-5" />
+                  <Button onClick={resetBreathingExercise} variant="outline" className="text-gray-500 hover:text-black cursor-pointer">
+                    <RotateCcw className="mr-2 h-5 w-5 text-gray-500 hover:text-black" />
                     Reset
                   </Button>
                 </div>
@@ -204,7 +204,7 @@ export default function QuickReliefPage() {
                   <p className="text-teal-600 mb-2">
                     Roll your shoulders forward 5 times, then backward 5 times. Focus on the sensation.
                   </p>
-                  <Button className="bg-teal-600 hover:bg-teal-700">Start 30-Second Timer</Button>
+                  <Button className="bg-teal-600 hover:bg-teal-700 cursor-pointer">Start 30-Second Timer</Button>
                 </div>
 
                 <div className="bg-teal-50 p-4 rounded-lg">
@@ -212,7 +212,7 @@ export default function QuickReliefPage() {
                   <p className="text-teal-600 mb-2">
                     Slowly tilt your head to each shoulder, holding for 5 seconds each side.
                   </p>
-                  <Button className="bg-teal-600 hover:bg-teal-700">Start 30-Second Timer</Button>
+                  <Button className="bg-teal-600 hover:bg-teal-700 cursor-pointer">Start 30-Second Timer</Button>
                 </div>
 
                 <div className="bg-teal-50 p-4 rounded-lg">
@@ -221,7 +221,7 @@ export default function QuickReliefPage() {
                     Clench your fists tightly for 5 seconds, then release and spread your fingers wide for 5 seconds.
                     Repeat 3 times.
                   </p>
-                  <Button className="bg-teal-600 hover:bg-teal-700">Start 30-Second Timer</Button>
+                  <Button className="bg-teal-600 hover:bg-teal-700 cursor-pointer">Start 30-Second Timer</Button>
                 </div>
               </div>
             </Card>
@@ -240,7 +240,7 @@ export default function QuickReliefPage() {
                   <p className="text-teal-600 mb-2">
                     The rhythmic sound of ocean waves can help regulate breathing and induce calm.
                   </p>
-                  <Button className="bg-teal-600 hover:bg-teal-700">
+                  <Button className="bg-teal-600 hover:bg-teal-700 cursor-pointer">
                     <PlayCircle className="mr-2 h-5 w-5" />
                     Play Ocean Waves
                   </Button>
@@ -251,7 +251,7 @@ export default function QuickReliefPage() {
                   <p className="text-teal-600 mb-2">
                     The soft patter of rainfall can be deeply relaxing and grounding.
                   </p>
-                  <Button className="bg-teal-600 hover:bg-teal-700">
+                  <Button className="bg-teal-600 hover:bg-teal-700 cursor-pointer">
                     <PlayCircle className="mr-2 h-5 w-5" />
                     Play Gentle Rain
                   </Button>
@@ -262,7 +262,7 @@ export default function QuickReliefPage() {
                   <p className="text-teal-600 mb-2">
                     Birds, rustling leaves, and gentle breezes can transport you to a peaceful natural setting.
                   </p>
-                  <Button className="bg-teal-600 hover:bg-teal-700">
+                  <Button className="bg-teal-600 hover:bg-teal-700 cursor-pointer">
                     <PlayCircle className="mr-2 h-5 w-5" />
                     Play Forest Sounds
                   </Button>

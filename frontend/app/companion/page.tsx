@@ -70,7 +70,11 @@ export default function CompanionPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
   const { toast } = useToast()
+
+  // Store the scroll position
+  const scrollPositionRef = useRef(0)
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -118,9 +122,49 @@ export default function CompanionPage() {
     }
   }, [toast])
 
+  // Save scroll position before input focus and component updates
+  const saveScrollPosition = () => {
+    if (messagesContainerRef.current) {
+      scrollPositionRef.current = messagesContainerRef.current.scrollTop
+    }
+  }
+
+  // Restore scroll position after component updates
+  const restoreScrollPosition = () => {
+    if (messagesContainerRef.current && scrollPositionRef.current > 0) {
+      messagesContainerRef.current.scrollTop = scrollPositionRef.current
+    }
+  }
+
+  // Handle scroll to bottom for new messages
   useEffect(() => {
+    // Only scroll to bottom for new messages, not for input focus/blur
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
+
+  // Restore scroll when textarea gets focus/loses focus
+  useEffect(() => {
+    const handleFocus = () => {
+      setTimeout(restoreScrollPosition, 0)
+    }
+
+    const handleBlur = () => {
+      setTimeout(restoreScrollPosition, 0)
+    }
+
+    const textarea = document.querySelector('textarea')
+    if (textarea) {
+      textarea.addEventListener('focus', handleFocus)
+      textarea.addEventListener('blur', handleBlur)
+    }
+
+    return () => {
+      if (textarea) {
+        textarea.removeEventListener('focus', handleFocus)
+        textarea.removeEventListener('blur', handleBlur)
+      }
+    }
+  }, [])
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode)
@@ -177,6 +221,8 @@ export default function CompanionPage() {
   };
 
   const handleSendMessage = async (text?: string) => {
+    saveScrollPosition();
+    
     const messageText = text || input;
     if (!messageText.trim()) return;
 
@@ -246,23 +292,20 @@ export default function CompanionPage() {
     "Small steps still move you forward.",
     "You are stronger than you think.",
     "It's okay not to be okay sometimes.",
-    "Progress isn't always visible, but it's happening."
   ];
 
   const tips = [
-    "Try 4-7-8 breathing: Inhale for 4, hold for 7, exhale for 8.",
     "Take a 5-minute break to stretch.",
-    "Write down three things you're grateful for.",
     "Stay hydrated throughout the day.",
     "Connect with someone you trust today."
   ];
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gradient-to-b from-blue-50 to-purple-50'}`}>
+    <div className={`min-h-screen ${darkMode ? 'dark:dark:bg-gradient-to-b from-teal-50 to-teal-100' : 'bg-gradient-to-b from-teal-50 to-teal-100'}`}>
       <div className="container mx-auto p-4 flex flex-col lg:flex-row">
       
-        <div className="lg:hidden flex justify-between items-center mb-4 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-          <h1 className="text-xl font-bold text-purple-600 dark:text-purple-300">Tranquil Mind</h1>
+        <div className="lg:hidden flex justify-between items-center mb-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+          <h1 className="text-xl font-bold text-teal-600 dark:text-teal-300">Serenity</h1>
           <div className="flex items-center space-x-2">
             <Button 
               onClick={toggleDarkMode}
@@ -286,11 +329,11 @@ export default function CompanionPage() {
         </div>
 
         <div className={`lg:block ${isMobileMenuOpen ? 'block' : 'hidden'} lg:w-1/4 mb-4 lg:mb-0 lg:mr-4`}>
-          <Card className="h-full bg-white dark:bg-gray-800 shadow-lg overflow-hidden border-0">
+          <Card className="h-full bg-white dark:bg-gradient-to-b from-teal-50 to-teal-100 shadow-lg overflow-hidden border-0">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent dark:from-purple-400 dark:to-blue-300">Tranquil Mind</h1>
-                <Button 
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-500 bg-clip-text text-[#48aa95]">Serenity</h1>
+                {/* <Button 
                   onClick={toggleDarkMode}
                   variant="ghost" 
                   size="sm"
@@ -298,38 +341,38 @@ export default function CompanionPage() {
                   aria-label="Toggle dark mode"
                 >
                   {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-                </Button>
+                </Button> */}
               </div>
               
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-lg font-semibold text-purple-600 dark:text-purple-300 mb-3">Daily Affirmation</h2>
-                  <div className="bg-purple-50 dark:bg-gray-700 p-4 rounded-lg italic text-gray-700 dark:text-gray-200">
+                  <h2 className="text-lg font-semibold text-teal-600 dark:text-[#48aa95] mb-3">Daily Affirmation</h2>
+                  <div className="bg-teal-50 dark:bg-[#48aa95] p-4 rounded-lg italic text-gray-700 dark:text-gray-200">
                     &quot;{quotes[Math.floor(Math.random() * quotes.length)]}&quot;
                   </div>
                 </div>
                 
                 <div>
-                  <h2 className="text-lg font-semibold text-blue-600 dark:text-blue-300 mb-3">Wellness Tip</h2>
-                  <div className="bg-blue-50 dark:bg-gray-700 p-4 rounded-lg text-gray-700 dark:text-gray-200">
+                  <h2 className="text-lg font-semibold text-cyan-600 dark:text-[#48aa95] mb-3">Wellness Tip</h2>
+                  <div className="bg-cyan-50 dark:bg-[#48aa95] p-4 rounded-lg text-gray-700 dark:text-gray-200">
                     {tips[Math.floor(Math.random() * tips.length)]}
                   </div>
                 </div>
                 
                 <div className="pt-4">
-                  <h2 className="text-lg font-semibold text-gray-600 dark:text-gray-300 mb-3">How It Works</h2>
+                  <h2 className="text-lg font-semibold text-[#48aa95] dark:text-[#48aa95] mb-3">How It Works</h2>
                   <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                     <li className="flex items-start">
-                      <span className="inline-flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 h-5 w-5 text-xs mr-2 mt-0.5">1</span>
-                      <span>Type or speak how you&apos;re feeling</span>
+                      <span className="inline-flex items-center justify-center rounded-full bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-300 h-5 w-5 text-xs mr-2 mt-0.5">1</span>
+                      <span className="text-[#48aa95]">Type or speak how you&apos;re feeling</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="inline-flex items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 h-5 w-5 text-xs mr-2 mt-0.5">2</span>
-                      <span>Get supportive, caring responses</span>
+                      <span className="inline-flex items-center justify-center rounded-full bg-cyan-100 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300 h-5 w-5 text-xs mr-2 mt-0.5">2</span>
+                      <span className="text-[#48aa95]">Get supportive, caring responses</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="inline-flex items-center justify-center rounded-full bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-300 h-5 w-5 text-xs mr-2 mt-0.5">3</span>
-                      <span>Build mindfulness through conversation</span>
+                      <span className="inline-flex items-center justify-center rounded-full bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-300 h-5 w-5 text-xs mr-2 mt-0.5">3</span>
+                      <span className="text-[#48aa95]">Build mindfulness through conversation</span>
                     </li>
                   </ul>
                 </div>
@@ -339,18 +382,22 @@ export default function CompanionPage() {
         </div>
         
         <div className="flex-1">
-          <Card className="bg-white dark:bg-gray-800 shadow-lg border-0 overflow-hidden">
+          <Card className="bg-white dark:dark:bg-gradient-to-b from-teal-50 to-teal-100 shadow-lg border-0 overflow-hidden">
             <div className="p-6">
               <div className="mb-6 hidden lg:block">
-                <h1 className="text-xl font-medium text-gray-700 dark:text-gray-200">Your Safe Space</h1>
+                <h1 className="text-xl font-medium text-gray-700 dark:text-[#03363C]">Your Safe Space</h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Share your thoughts freely. I&apos;m here to listen.</p>
               </div>
-
            
-              <div className="h-[500px] lg:h-[600px] overflow-y-auto mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg relative border border-gray-100 dark:border-gray-700">
+              <div 
+                ref={messagesContainerRef}
+                className="h-[500px] lg:h-[600px] overflow-y-auto mb-6 p-4 bg-gray-50 dark:bg-[#D7FCF4] rounded-lg relative border border-gray-100 dark:border-[#52bba4]"
+                onClick={saveScrollPosition}
+                onScroll={saveScrollPosition}
+              >
                 {messages.map((message, index) => (
                   <div key={index} className={`mb-4 ${message.role === "user" ? "text-right" : "text-left"}`}>
-                    <div className="flex items-end gap-2 mb-1 text-xs text-gray-500 dark:text-gray-400">
+                    <div className="flex items-end gap-2 mb-1 text-xs text-gray-500 dark:text-gray-600">
                       {message.role === "user" ? (
                         <>
                           <span className="ml-auto">{message.timestamp}</span>
@@ -358,7 +405,7 @@ export default function CompanionPage() {
                         </>
                       ) : (
                         <>
-                          <span className="font-medium">Tranquil Mind</span>
+                          <span className="font-medium">Serenity</span>
                           <span>{message.timestamp}</span>
                         </>
                       )}
@@ -366,8 +413,8 @@ export default function CompanionPage() {
                     <div
                       className={`inline-block p-4 rounded-2xl text-base max-w-[80%] shadow-sm ${
                         message.role === "user"
-                          ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white"
-                          : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-100 dark:border-gray-700"
+                          ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white"
+                          : "bg-white dark:bg-[#388071] text-gray-800 dark:text-gray-200 border border-gray-100 dark:border-gray-700"
                       }`}
                     >
                       {message.content}
@@ -378,7 +425,7 @@ export default function CompanionPage() {
                   <div className="text-left mb-4">
                     <div className="inline-block p-4 rounded-2xl bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-100 dark:border-gray-700 shadow-sm">
                       <div className="flex items-center space-x-2">
-                        <Loader2 className="h-5 w-5 animate-spin text-purple-500 dark:text-purple-400" />
+                        <Loader2 className="h-5 w-5 animate-spin text-teal-500 dark:text-teal-400" />
                         <span className="text-sm text-gray-500 dark:text-gray-400">Thinking...</span>
                       </div>
                     </div>
@@ -392,8 +439,10 @@ export default function CompanionPage() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Share how you're feeling..."
-                  className="resize-none rounded-2xl pl-4 pr-16 py-4 border-gray-200 dark:border-gray-700 dark:bg-gray-700 dark:text-gray-200 focus:border-purple-300 dark:focus:border-purple-500 focus:ring focus:ring-purple-200 dark:focus:ring-purple-800 focus:ring-opacity-50 shadow-sm"
+                  className="resize-none rounded-2xl pl-4 pr-16 py-4 border-gray-200 dark:border-gray-700 dark:bg-[#307d6d] dark:text-gray-200 focus:border-teal-300 dark:focus:border-teal-500 focus:ring focus:ring-teal-200 dark:focus:ring-teal-800 focus:ring-opacity-50 shadow-sm"
                   rows={3}
+                  onFocus={saveScrollPosition}
+                  onBlur={restoreScrollPosition}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault()
@@ -419,7 +468,7 @@ export default function CompanionPage() {
                   <Button
                     onClick={() => handleSendMessage()}
                     disabled={isLoading || !input.trim()}
-                    className="rounded-full h-10 w-10 flex items-center justify-center bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+                    className="rounded-full h-10 w-10 flex items-center justify-center bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600"
                     size="sm"
                   >
                     <Send className="h-5 w-5" />
