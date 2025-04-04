@@ -296,8 +296,7 @@ export default function CompanionPage() {
 
   const tips = [
     "Take a 5-minute break to stretch.",
-    "Stay hydrated throughout the day.",
-    "Connect with someone you trust today."
+    "Stay hydrated throughout the day."
   ];
 
   return (
