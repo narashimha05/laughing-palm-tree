@@ -26,7 +26,6 @@ import {
   PolarRadiusAxis,
 } from "recharts"
 
-// Mock data for the charts
 const dailyMoodData = [
   { date: "Apr 1", score: 6.2, speechMinutes: 4.5 },
   { date: "Apr 2", score: 5.8, speechMinutes: 3.2 },
@@ -80,16 +79,14 @@ const MOOD_COLORS = {
 }
 
 export default function AnalyticsPage() {
-  const [timeRange, setTimeRange] = useState("2weeks")
+  const setTimeRange = useState("2weeks")[1]
 
-  // Calculate averages and totals
   const averageMood = (dailyMoodData.reduce((acc, day) => acc + day.score, 0) / dailyMoodData.length).toFixed(1)
   const totalSpeechMinutes = dailyMoodData.reduce((acc, day) => acc + day.speechMinutes, 0).toFixed(1)
   const totalSessions = dailyMoodData.length
   const speechTrend = (dailyMoodData[dailyMoodData.length - 1].speechMinutes / dailyMoodData[0].speechMinutes - 1) * 100
   const moodTrend = (dailyMoodData[dailyMoodData.length - 1].score / dailyMoodData[0].score - 1) * 100
 
-  // Mood distribution
   const moodDistribution = [
     { name: "Great (8-10)", value: dailyMoodData.filter((d) => d.score >= 8).length, color: MOOD_COLORS.great },
     {
