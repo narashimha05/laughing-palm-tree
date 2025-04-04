@@ -12,13 +12,11 @@ type Message = {
   content: string
 }
 
-// Declare SpeechRecognition interface
 declare global {
   interface Window {
     SpeechRecognition: typeof SpeechRecognition
     webkitSpeechRecognition: typeof SpeechRecognition
     SpeechSynthesisUtterance: typeof SpeechSynthesisUtterance
-    // Removed redundant declaration of speechSynthesis
   }
   let SpeechRecognition: {
     new (): SpeechRecognition
@@ -41,16 +39,19 @@ declare global {
 
 interface SpeechRecognition {
   onend: (() => void) | null
-  onresult: ((event: SpeechRecognitionEvent) => void) | null // Corrected event type
+  onresult: ((event: SpeechRecognitionEvent) => void) | null 
   start: () => void
   stop: () => void
-  continuous: boolean // Added continuous property
-  interimResults: boolean // Added interimResults property
-  lang: string // Added lang property
-  onerror: ((event: { error: string }) => void) | null // Added onerror property
+  continuous: boolean 
+  interimResults: boolean
+  lang: string 
+  onerror: ((event: { error: string }) => void) | null 
 }
 
-
+// Define the Gemini API response type
+interface GeminiResponse {
+  text: string;
+}
 
 export default function CompanionPage() {
   const [input, setInput] = useState("")
@@ -64,14 +65,13 @@ export default function CompanionPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null)
+  const [conversationHistory, setConversationHistory] = useState<Message[]>([])
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { toast } = useToast()
 
-  // Initialize speech recognition
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Browser compatibility check
       if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
         const recognitionInstance = new SpeechRecognition()
@@ -83,7 +83,6 @@ export default function CompanionPage() {
         recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
           const transcript = event.results[0][0].transcript
           setInput(transcript)
-          // Auto-send after speech recognition
           setTimeout(() => {
             handleSendMessage(transcript)
           }, 500)
@@ -114,7 +113,6 @@ export default function CompanionPage() {
     }
   }, [toast])
 
-  // Scroll to bottom of messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
@@ -135,56 +133,101 @@ export default function CompanionPage() {
     }
   }
 
-  const handleSendMessage = async (text?: string) => {
-    const messageText = text || input
-    if (!messageText.trim()) return
+  const fetchGeminiResponse = async (messages: Message[]): Promise<string> => {
+    try {
+      // Format conversation history for Gemini
+      const formattedMessages = messages.map(msg => ({
+        role: msg.role,
+        parts: [{ text: msg.content }]
+      }));
 
-    // Add user message to chat
-    const userMessage: Message = { role: "user", content: messageText }
-    setMessages((prev) => [...prev, userMessage])
-    setInput("")
-    setIsLoading(true)
+      const response = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: formattedMessages,
+          systemPrompt: "You are a caring and empathetic stress companion. Respond in a conversational, friendly tone as if you're a close friend who listens and cares deeply. Keep responses relatively brief (1-3 sentences) but warm, supportive and helpful. Ask follow-up questions occasionally to show your engagement. Use simple language and avoid clinical terms. Focus on creating a safe space for the person to express their feelings."
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+
+      const data: GeminiResponse = await response.json();
+      return data.text;
+    } catch (error) {
+      console.error('Error fetching from Gemini API:', error);
+      return "I'm here to listen. Would you like to share more about how you're feeling?";
+    }
+  };
+
+  const handleSendMessage = async (text?: string) => {
+    const messageText = text || input;
+    if (!messageText.trim()) return;
+
+    const userMessage: Message = { role: "user", content: messageText };
+    setMessages(prev => [...prev, userMessage]);
+    setInput("");
+    setIsLoading(true);
+
+    // Update conversation history
+    const updatedHistory = [...conversationHistory, userMessage];
+    setConversationHistory(updatedHistory);
 
     try {
-      // Simulate AI response (in a real app, this would call an API)
-      setTimeout(() => {
-        const responses = [
-          "I understand how you're feeling. Would you like to talk more about what's causing your stress?",
-          "That sounds challenging. Remember that it's okay to feel this way, and I'm here to support you.",
-          "I hear you. Taking small steps to address what's bothering you can make a big difference. What's one small thing you could do today to help yourself?",
-          "Thank you for sharing that with me. Would it help to explore some coping strategies together?",
-          "Your feelings are valid. Let's work through this together at your own pace.",
-        ]
+      // Call Gemini API
+      const response = await fetchGeminiResponse(updatedHistory);
+      
+      const assistantMessage: Message = {
+        role: "assistant",
+        content: response,
+      };
 
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)]
-
-        const assistantMessage: Message = {
-          role: "assistant",
-          content: randomResponse,
+      setMessages(prev => [...prev, assistantMessage]);
+      setConversationHistory(prev => [...prev, assistantMessage]);
+      
+      // Text-to-speech with female voice
+      if ("speechSynthesis" in window) {
+        const speech = new SpeechSynthesisUtterance(response);
+        
+        // Get available voices
+        const voices = window.speechSynthesis.getVoices();
+        
+        // Try to find a female voice
+        const femaleVoice = voices.find(voice => 
+          voice.name.includes('female') || 
+          voice.name.includes('woman') ||
+          voice.name.includes('girl') ||
+          voice.name.toLowerCase().includes('samantha') ||
+          voice.name.toLowerCase().includes('karen') ||
+          voice.name.toLowerCase().includes('victoria')
+        );
+        
+        if (femaleVoice) {
+          speech.voice = femaleVoice;
         }
-
-        setMessages((prev) => [...prev, assistantMessage])
-        setIsLoading(false)
-
-        // Speak the response (text-to-speech)
-        if ("speechSynthesis" in window) {
-          const speech = new SpeechSynthesisUtterance(randomResponse)
-          speech.rate = 1
-          speech.pitch = 1
-          speech.volume = 1
-          window.speechSynthesis.speak(speech)
-        }
-      }, 1500)
+        
+        // Set voice properties for a sweet, soothing tone
+        speech.rate = 0.9;  // Slightly slower for soothing effect
+        speech.pitch = 1.2; // Slightly higher pitch for female voice
+        speech.volume = 1;
+        
+        window.speechSynthesis.speak(speech);
+      }
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to get a response. Please try again.",
         variant: "destructive",
-      })
-      setIsLoading(false)
-      console.log("Error:", error)
+      });
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 to-teal-100 dark:from-teal-950 dark:to-teal-900 py-12">
@@ -266,4 +309,3 @@ export default function CompanionPage() {
     </div>
   )
 }
-
