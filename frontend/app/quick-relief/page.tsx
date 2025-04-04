@@ -19,35 +19,32 @@ export default function QuickReliefPage() {
     setBreathingProgress(0)
 
     const breathingCycle = () => {
-      // Inhale for 4 seconds
       setBreathingPhase("inhale")
       let progress = 0
       const inhaleInterval = setInterval(() => {
         progress += 1
-        setBreathingProgress(progress * 25) // 0-100 over 4 seconds
+        setBreathingProgress(progress * 25)
         if (progress >= 4) {
           clearInterval(inhaleInterval)
 
-          // Hold for 4 seconds
           setBreathingPhase("hold")
           progress = 0
           const holdInterval = setInterval(() => {
             progress += 1
-            setBreathingProgress(progress * 25) // 0-100 over 4 seconds
+            setBreathingProgress(progress * 25)
             if (progress >= 4) {
               clearInterval(holdInterval)
 
-              // Exhale for 4 seconds
               setBreathingPhase("exhale")
               progress = 0
               const exhaleInterval = setInterval(() => {
                 progress += 1
-                setBreathingProgress(progress * 25) // 0-100 over 4 seconds
+                setBreathingProgress(progress * 25) 
                 if (progress >= 4) {
                   clearInterval(exhaleInterval)
                   setBreathCount((prev) => prev + 1)
 
-                  // Continue the cycle if still active
+                  
                   if (isBreathingActive) {
                     breathingCycle()
                   }
@@ -79,22 +76,22 @@ export default function QuickReliefPage() {
         <h1 className="text-3xl font-bold text-teal-800 mb-8 text-center">Quick Stress Relief</h1>
 
         <Tabs defaultValue="breathing" className="max-w-3xl mx-auto">
-          <TabsList className="grid grid-cols-4 mb-8">
-            <TabsTrigger value="breathing" className="flex flex-col items-center py-3">
+          <TabsList className="grid grid-cols-4 mb-10 rounded-x w-full">
+            <TabsTrigger value="breathing" className="flex flex-col items-center py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md ">
               <Lungs className="h-5 w-5 mb-1" />
-              <span>Breathing</span>
+              <span className="text-black">Breathing</span>
             </TabsTrigger>
-            <TabsTrigger value="grounding" className="flex flex-col items-center py-3">
+            <TabsTrigger value="grounding" className="flex flex-col items-center py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md">
               <Brain className="h-5 w-5 mb-1" />
-              <span>Grounding</span>
+              <span className="text-black">Grounding</span>
             </TabsTrigger>
-            <TabsTrigger value="movement" className="flex flex-col items-center py-3">
+            <TabsTrigger value="movement" className="flex flex-col items-center py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md">
               <Activity className="h-5 w-5 mb-1" />
-              <span>Movement</span>
+              <span className="text-black">Movement</span>
             </TabsTrigger>
-            <TabsTrigger value="sounds" className="flex flex-col items-center py-3">
+            <TabsTrigger value="sounds" className="flex flex-col items-center py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md">
               <Music className="h-5 w-5 mb-1" />
-              <span>Sounds</span>
+              <span className="text-black">Sounds</span>
             </TabsTrigger>
           </TabsList>
 
